@@ -1,11 +1,13 @@
 package com.example.tutorial2
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     var names = arrayOf("Affenpinscher", "Afghan hound", "African hunting")
@@ -13,9 +15,10 @@ class MainActivity : AppCompatActivity() {
     var bool2 = false
     var bool3 = false
     var count = 0
+    var answered = true
 
     var correctAns = 0
-    var incorrectAns = 0
+    var total = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -36,11 +39,15 @@ class MainActivity : AppCompatActivity() {
             generateDogs(imgView1, imgView2, imgView3, text, textAns)
         }
         finishBut.setOnClickListener{
-
+            val scoreIntent = Intent(this, ScoreActivity::class.java)
+            scoreIntent.putExtra("correct", correctAns.toString())
+            scoreIntent.putExtra("total", total.toString())
+            startActivity(scoreIntent)
         }
         //setting onclick event to images
         imgView1.setOnClickListener{
             imageOnClick(0, textAns)
+            imgView1.setBackgroundResource(R.drawable.image_boarder)
         }
         imgView2.setOnClickListener{
             imageOnClick(1, textAns)
@@ -51,47 +58,53 @@ class MainActivity : AppCompatActivity() {
 
     }
     private fun generateDogs(imgView1: ImageView, imgView2: ImageView, imgView3: ImageView, text: TextView, answerTxt: TextView) {
-        var arr = ArrayList<Int>()
-        bool1 = false
-        bool2 = false
-        bool3 = false
-        answerTxt.text = ""
-        count = 0
+        if (answered){
+            var arr = ArrayList<Int>()
+            bool1 = false
+            bool2 = false
+            bool3 = false
+            answerTxt.text = ""
+            count = 0
+            total++
 
-        //adding 3 random values for number of dog breeds
-        var new_number = randomVal(0,2)
-        while (arr.size < 3) {
-            if (new_number !in arr){
-                arr.add(new_number)
-            }else
-                new_number = randomVal(0,2)
-        }
-
-        //get a random value from the array to which the correct answer will be assigned
-        val correctDog = arr.random()
-        text.text = "Which dog is " + names[correctDog]
-
-        if (arr[0] == correctDog){
-            bool1 = true
-        }else if (arr[1] == correctDog){
-            bool2 = true
-        }else if (arr[2] == correctDog){
-            bool3 = true
-        }
-
-        //for every index checking if it equals with values and assigning random dog image number
-        //specific to that dog breed into the same array index
-        for ((index, value) in arr.withIndex()) {
-            if (value == 0){
-                arr[index] = randomVal(1,10)
-            } else if (value == 1){
-                arr[index] = randomVal(11,20)
-            }else if (value == 2){
-                arr[index] = randomVal(21,30)
+            //adding 3 random values for number of dog breeds
+            var new_number = randomVal(0,2)
+            while (arr.size < 3) {
+                if (new_number !in arr){
+                    arr.add(new_number)
+                }else
+                    new_number = randomVal(0,2)
             }
+
+            //get a random value from the array to which the correct answer will be assigned
+            val correctDog = arr.random()
+            text.text = "Which dog is " + names[correctDog]
+
+            if (arr[0] == correctDog){
+                bool1 = true
+            }else if (arr[1] == correctDog){
+                bool2 = true
+            }else if (arr[2] == correctDog){
+                bool3 = true
+            }
+
+            //for every index checking if it equals with values and assigning random dog image number
+            //specific to that dog breed into the same array index
+            for ((index, value) in arr.withIndex()) {
+                if (value == 0){
+                    arr[index] = randomVal(1,10)
+                } else if (value == 1){
+                    arr[index] = randomVal(11,20)
+                }else if (value == 2){
+                    arr[index] = randomVal(21,30)
+                }
+            }
+            //assigning dog images to imageview
+            randImage(imgView1, imgView2, imgView3, arr[0], arr[1], arr[2])
+            answered = false
+        }else{
+            Toast.makeText(this, "Please choose an answer", Toast.LENGTH_LONG).show()
         }
-        //assigning dog images to imageview
-        randImage(imgView1, imgView2, imgView3, arr[0], arr[1], arr[2])
     }
 
     private fun randImage(imgView1: ImageView, imgView2: ImageView, imgView3: ImageView, img1No: Int, img2No: Int, img3No: Int)
@@ -110,12 +123,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun imageOnClick(int: Int, answerTxt: TextView){
+        answered = true
         if (count == 0) {
             if (int == 0 && bool1){
                 correctAns++
                 answerTxt.text = "CORRECT"
                 answerTxt.setTextColor(Color.parseColor("#00FF00"))
-                //imgView1.setBackgroundResource(R.drawable.image_boarder)
+
             }else if (int == 1 && bool2){
                 correctAns++
                 answerTxt.text = "CORRECT"
