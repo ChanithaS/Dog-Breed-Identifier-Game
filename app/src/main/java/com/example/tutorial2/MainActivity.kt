@@ -11,7 +11,7 @@ import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     //names of dogs
-    var names = arrayOf("Affenpinscher", "Afghan hound", "African hunting")
+    private var names = arrayOf("Affenpinscher", "Afghan hound", "African hunting","bedlington terrier","Airedale","Labrador Retriever","Rottweiler","Appenzeller","Newfoundland")
     //storing values of used int values .. to generate unique image indexes
     var doneValues = ArrayList<Int>()
     //getting the count of how many times the specific dog breed was used
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     var answered = true
 
     var correctAns = 0
-    var total = 0;
+    var total = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,15 +48,15 @@ class MainActivity : AppCompatActivity() {
         }
         //setting onclick event to images
         imgView1.setOnClickListener{
-            imgView1.setBackgroundResource(R.drawable.image_boarder)
+            //imgView1.setBackgroundResource(R.drawable.image_boarder)
             imageOnClick(0, textAns, imgView1, imgView2, imgView3)
         }
         imgView2.setOnClickListener{
-            imgView2.setBackgroundResource(R.drawable.image_boarder)
+            //imgView2.setBackgroundResource(R.drawable.image_boarder)
             imageOnClick(1, textAns, imgView1, imgView2, imgView3)
         }
         imgView3.setOnClickListener{
-            imgView3.setBackgroundResource(R.drawable.image_boarder)
+            //imgView3.setBackgroundResource(R.drawable.image_boarder)
             imageOnClick(2, textAns, imgView1, imgView2, imgView3)
         }
 
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             if (value == 10)
                 finishedBreads++
         }
-        if (finishedBreads != names.size)
+        if (finishedBreads != names.size && finishedBreads < names.size -3)
         {
             //only letting go next if the user has answered
             if (answered){
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                 answerTxt.text = ""
                 count = 0
                 //----------------------------------------
-                var arr = ArrayList<Int>()
+                val arr = ArrayList<Int>()
                 total++
 
                 //adding 3 random values for number of dog breeds
@@ -99,7 +99,8 @@ class MainActivity : AppCompatActivity() {
 
                 //get a random value from the array to which the correct answer will be assigned
                 val correctDog = arr.random()
-                text.text = "Which dog is " + names[correctDog]
+                val ques = "Which dog is " + names[correctDog]
+                text.text = ques
 
                 //if the random correct answer is equal to the index assigned number..setting true
                 if (arr[0] == correctDog){
@@ -113,15 +114,15 @@ class MainActivity : AppCompatActivity() {
                 //for every index checking if it equals with values and assigning random dog image number
                 //specific to that dog breed into the same array index
                 for ((index, value) in arr.withIndex()) {
-                    if (value == 0){
-                        arr[index] = valueGen(1, 10)
-                        breedUsedCount[0] = breedUsedCount[0] + 1
-                    } else if (value == 1){
-                        arr[index] = valueGen(11, 20)
-                        breedUsedCount[1] = breedUsedCount[1] + 1
-                    }else if (value == 2){
-                        arr[index] = valueGen(21, 30)
-                        breedUsedCount[2] = breedUsedCount[2] + 1
+                    //going trough all the dog breads and checking if that bread was selected
+                    for ((i) in names.withIndex()) {
+                        if (value == i){
+                            //if the dog bread is selected for one of 3 slots..
+                            // generating a value in between eg-1 - 10, 11-20 according to index
+                            arr[index] = valueGen((i*10)+1, (i*10)+10)
+                            //increasing breed count no so it'll check if all the dog images of the specific bread are used
+                            breedUsedCount[i] = breedUsedCount[i] + 1
+                        }
                     }
                 }
                 //assigning dog images to imageview
@@ -138,6 +139,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun randImage(imgView1: ImageView, imgView2: ImageView, imgView3: ImageView, img1No: Int, img2No: Int, img3No: Int)
     {
+        //setting image according to string value
         val image1 = "dog$img1No"                 //https://stackoverflow.com/questions/7941304/android-reference-things-in-r-drawable-using-variables
         val resID1 = resources.getIdentifier(image1, "drawable", "com.example.tutorial2")
         imgView1.setImageResource(resID1)
@@ -149,8 +151,6 @@ class MainActivity : AppCompatActivity() {
         val image3 = "dog$img3No"
         val resID3 = resources.getIdentifier(image3, "drawable", "com.example.tutorial2")
         imgView3.setImageResource(resID3)
-
-
     }
 
     private fun imageOnClick(int: Int, answerTxt: TextView, imgView1: ImageView, imgView2: ImageView, imgView3: ImageView){
@@ -177,6 +177,17 @@ class MainActivity : AppCompatActivity() {
                 answerTxt.setTextColor(Color.parseColor("#00FF00"))
                 imgView3.setBackgroundResource(R.drawable.image_boarder_correct)
             }else{
+                when (int) {
+                    0 -> {
+                        imgView1.setBackgroundResource(R.drawable.image_boarder)
+                    }
+                    1 -> {
+                        imgView2.setBackgroundResource(R.drawable.image_boarder)
+                    }
+                    2 -> {
+                        imgView3.setBackgroundResource(R.drawable.image_boarder)
+                    }
+                }
                 answerTxt.text = "WRONG"
                 answerTxt.setTextColor(Color.parseColor("#FF0000"))
             }
